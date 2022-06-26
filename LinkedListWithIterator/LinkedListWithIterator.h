@@ -67,17 +67,6 @@ public:
         return tmp;    //return the un-incremented pointers
     }
 
-    //advance n nodes forward in the list 
-    ListIterator& operator+(const uint32_t n)
-    {
-        for(uint32_t i{}; i<n; i++)
-        {
-            prevNode = currNode;
-            currNode = currNode->next; 
-        }
-        return *this;
-    }
-
 };//class ListIterator
 
 
