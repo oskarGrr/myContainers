@@ -5,7 +5,7 @@
 #include "Vec4.h"    //sample class for tests
 
 //declaration for the LinkedList class below ListIterator
-template<class T>
+template<class>
 class LinkedList;
 
 template <class List>
@@ -18,7 +18,8 @@ private:
     //NodePointer is now a Node*
     using NodePointer = typename List::Node*;
 
-    NodePointer prevNode; //location of previous node
+    //(singly linked list but only the iterator remebers the prev node for easier deletions and insertions)
+    NodePointer prevNode; //location of previous node 
     NodePointer currNode; //location of current node
 
 public:
@@ -42,7 +43,7 @@ public:
         return(currNode == rhs.currNode);
     }
 
-    //chech if iterators are not equal
+    //check if iterators are not equal
     bool operator!=(const ListIterator& rhs)
     {
         return !(currNode == rhs.currNode);
@@ -85,9 +86,9 @@ private:
         Node(const T& data, Node* ptr) 
             : next(ptr), data(data){}
 
-        //construct a node from an rvalue
-        Node(T&& data, Node* ptr) 
-            : next(ptr), data(std::move(data)){}
+        //construct a node from an rvalue/xvalue
+        Node(T&& data, Node* ptr)
+            : next(ptr), data(std::forward<T>(data)){}
 
         //node constructor for emplacing inside node
         template<typename... Types>

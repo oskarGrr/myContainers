@@ -13,10 +13,10 @@ class ListIterator
 {   
 private:
     //ValTy is now = the type of data in the list
-    using ValTy = typename List::ValType; 
+    using ValTy = List::ValType; 
 
     //NodePointer is now a Node*
-    using NodePointer = typename List::Node*;
+    using NodePointer = List::Node*;
 
     NodePointer prevNode; //location of previous node
     NodePointer currNode; //location of current node
@@ -63,23 +63,11 @@ public:
     ListIterator operator++(int)
     {        
         auto tmp = *this; //save current pointers  
-        ++*this;        //increment *this with the above operator
-        return tmp;    //return the un-incremented pointers
-    }
-
-    //advance n nodes forward in the list 
-    ListIterator& operator+(const uint32_t n)
-    {
-        for(uint32_t i{}; i<n; i++)
-        {
-            prevNode = currNode;
-            currNode = currNode->next; 
-        }
-        return *this;
+        ++*this;         //increment *this with the above operator
+        return tmp;     //return the un-incremented pointers
     }
 
 };//class ListIterator
-
 
 //templated class for a singly linked list
 //iterator for this class above
@@ -129,7 +117,7 @@ public:
 
     //copy constructor
     LinkedList(LinkedList& oldObj) : size(0), head(nullptr)
-    {     
+    {   
         //keep track of where the last
         //node is in the new list as we push elements into it
         //start the new list by making the first node

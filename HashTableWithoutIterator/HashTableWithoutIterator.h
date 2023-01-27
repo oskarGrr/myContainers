@@ -101,7 +101,7 @@ private:
         temp.resize(newNumOfLists);
     
         //for every list in old vector
-        for(uint32_t i{}; i<numOfLists; i++) 
+        for(uint32_t i=0; i<numOfLists; i++) 
         {
             //for every node in old lists
             for(auto& node : chains[i])

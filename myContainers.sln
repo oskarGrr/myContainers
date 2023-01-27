@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31829.152
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32825.248
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LinkedListWithIterator", "LinkedListWithIterator\LinkedListWithIterator.vcxproj", "{EF455575-FFB7-4F1D-8944-C57A65725BBA}"
 EndProject
@@ -10,6 +10,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "HashTableWithoutIterator", "HashTableWithoutIterator\HashTableWithoutIterator.vcxproj", "{EC20BF5C-646E-42A9-9041-753FB860907D}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LinkedListWithoutIterator", "LinkedListWithoutIterator\LinkedListWithoutIterator.vcxproj", "{84918334-91ED-478A-ADA8-A7CB9B2D3C91}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AVLTree", "AVLTree\AVLTree.vcxproj", "{60CCB5F7-B91B-45B8-AD3F-8EB793F19282}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,14 @@ Global
 		{84918334-91ED-478A-ADA8-A7CB9B2D3C91}.Release|x64.Build.0 = Release|x64
 		{84918334-91ED-478A-ADA8-A7CB9B2D3C91}.Release|x86.ActiveCfg = Release|Win32
 		{84918334-91ED-478A-ADA8-A7CB9B2D3C91}.Release|x86.Build.0 = Release|Win32
+		{60CCB5F7-B91B-45B8-AD3F-8EB793F19282}.Debug|x64.ActiveCfg = Debug|x64
+		{60CCB5F7-B91B-45B8-AD3F-8EB793F19282}.Debug|x64.Build.0 = Debug|x64
+		{60CCB5F7-B91B-45B8-AD3F-8EB793F19282}.Debug|x86.ActiveCfg = Debug|Win32
+		{60CCB5F7-B91B-45B8-AD3F-8EB793F19282}.Debug|x86.Build.0 = Debug|Win32
+		{60CCB5F7-B91B-45B8-AD3F-8EB793F19282}.Release|x64.ActiveCfg = Release|x64
+		{60CCB5F7-B91B-45B8-AD3F-8EB793F19282}.Release|x64.Build.0 = Release|x64
+		{60CCB5F7-B91B-45B8-AD3F-8EB793F19282}.Release|x86.ActiveCfg = Release|Win32
+		{60CCB5F7-B91B-45B8-AD3F-8EB793F19282}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
