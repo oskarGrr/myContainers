@@ -374,7 +374,7 @@ public:
     //clear all the nodes in a post order recursive fashion
     void clearTree()
     {
-        auto postOrderClear = [](this auto const& self, Node*& node) -> void
+        auto postOrderClear = [](this auto const& self, Node* node) -> void
         {
             if(node->m_left) self(node->m_left);
             if(node->m_right) self(node->m_right);

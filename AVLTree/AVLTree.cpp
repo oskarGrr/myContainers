@@ -8,16 +8,16 @@ int main()
     std::srand(std::time(nullptr));
     AVLTree<int> avlTree;
 
-    for(int i = 0; i < 30; ++i)
-    {
+    for(int i = 0; i < 11; ++i)
         avlTree.insert(i);
-    }
 
     avlTree.erase(5);
-    avlTree.erase(11);
-    avlTree.erase(15);
+    avlTree.erase(4);
+    avlTree.erase(6);
 
     int c = 0;
     for(auto i : avlTree) 
         std::cout << i << " : " << c++ <<'\n';
+
+    avlTree.clearTree();
 }
