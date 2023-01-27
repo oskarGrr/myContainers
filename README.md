@@ -1,2 +1,2 @@
-A repo of some of the most common data structures made in C++.
-They are all header only.
+A repo of some of the most common data structures.
+They are made with C++ and are header only.
