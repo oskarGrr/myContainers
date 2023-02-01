@@ -36,12 +36,12 @@ int main()
 
     //print both trees
     int c = 0;
-    for(auto i : T1)
+    for(auto& i : T1)
         std::cout << i << " : " << ++c <<'\n';
 
     std::cout << "\n\n";
 
     int x = 0;
-    for(auto i : T2)
+    for(auto& i : T2)
         std::cout << i << " : " << ++x <<'\n';
 }
