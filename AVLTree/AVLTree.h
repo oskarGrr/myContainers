@@ -1,16 +1,21 @@
 #pragma once
-#include <utility> //std::move std::pair std::max std::forward
+#include <utility> //std::move std::pair std::max std::forward std::swap
 #include <stack>//std::stack
 
 template <typename> class AVLTree;
 
 template <typename T>
-class AVLTIterator
+class AVLTIterator//const iterator only
 {
 private:
     
     friend class AVLTree<T>;
-    using NodePtr = typename AVLTree<T>::Node*;
+    using iterator_category = std::bidirectional_iterator_tag;
+    using difference_type   = std::ptrdiff_t;
+    using NodePtr    = typename AVLTree<T>::Node*;
+    using value_type = T;
+    using pointer    = T*;
+    using reference  = T&;
 
     //For the design of this iterator, I chose to use a stack of pointers instead of storing the parent 
     //pointers in each node or having a threaded tree. If the tree was just a BST and not an AVL tree, then
@@ -42,7 +47,7 @@ private:
         if(!root) return;
 
         auto search = [&elementToFind, this]
-        (this auto const& self, NodePtr currNode) -> NodePtr
+        (this auto const& self, NodePtr currNode) -> pointer
         {         
             if(elementToFind > currNode->m_element)
             { 
@@ -70,6 +75,7 @@ private:
                 m_nodeHistory.pop();
         }
     }
+
 
     //for the avl tree to easily get a pointer to the parent of a node.
     //the iterator is passed by reference as to not copy the pointer stack.
@@ -106,6 +112,19 @@ private:
 public:
 
     ~AVLTIterator() = default;
+
+    //Copies are slightly more expensive than iterators for most containers,
+    //since this will have the internal stack of pointers. Try to move instead if you dont need a deep copy.
+    AVLTIterator(AVLTIterator const& oldIter) : m_nodeHistory{oldIter.m_nodeHistory} {}
+
+    AVLTIterator(AVLTIterator&& oldIter) noexcept : m_nodeHistory{std::move(oldIter.m_nodeHistory)} {}
+
+    //unified copy and move assignment operator with strong guarantee
+    AVLTIterator& operator=(AVLTIterator rhs)
+    {
+        m_nodeHistory.swap(rhs.m_nodeHistory);
+        return *this;
+    }
 
     //postfix increment/decrement not supported as to not allow
     //accidental copies of the internal pointer stack.
@@ -168,17 +187,17 @@ public:
         return *this;
     }
 
-    T* operator->()
+    const T* operator->() const
     {
         return &m_nodeHistory.top()->m_element;
     }
 
-    T& operator*()
+    const T& operator*() const
     {
         return m_nodeHistory.top()->m_element;
     }
 
-    bool operator==(AVLTIterator const& rhs)
+    bool operator==(AVLTIterator const& rhs) const
     {
         //make sure containers are not empty before calling top()
         bool thisIsEmpty = m_nodeHistory.empty(), rhsIsEmpty = rhs.m_nodeHistory.empty();
@@ -186,7 +205,7 @@ public:
         return thisIsEmpty && rhsIsEmpty;
     }
 
-    bool operator!=(AVLTIterator const& rhs)
+    bool operator!=(AVLTIterator const& rhs) const
     {
         return !(*this == rhs);
     }
@@ -205,9 +224,10 @@ private:
         Node* m_left = nullptr, *m_right = nullptr;
         int m_balanceFactor = 0, m_height = 0;
 
-        //move or copy an element into a node.
-        template<typename Ty>
-        Node(Ty&& elem) : m_element{std::forward<Ty>(elem)} {}
+        Node(T&& elem) : m_element{std::move(elem)} {} //move an element into a node.
+        Node(T const& elem) : m_element{elem} {} //copy an element into a node
+        Node(Node&&) = delete;
+        Node(Node const&) = default;
 
         void updateHeightAndBalanceFactor()
         {
@@ -262,7 +282,7 @@ private:
         }
     };
 
-    Node* m_root;
+    Node* m_root = nullptr;
 
     Node* minNode(Node* node)
     {
@@ -278,17 +298,16 @@ private:
         return node;
     }
 
-    //private recursive insert that takes a forwarding reference.
-    //used by the copy and move public insert methods below
-    template <typename Ty>
-    Node* insert(Ty&& toInsert, Node*& node)
+    //private recursive insert that takes a forwarding reference to type T.
+    //used by the copy/move public insert methods below to avoid code duplication
+    Node* insert(auto&& toInsert, Node*& node)
     {
         if(!node)//base case: end of tree reached make a new node and return
-            node = new Node(std::forward<Ty>(toInsert));
+            node = new Node(std::forward<decltype(toInsert)>(toInsert));
         else if(toInsert > node->m_element)//the element to insert needs to go to the right
-            insert(std::forward<Ty>(toInsert), node->m_right);
+            insert(std::forward<decltype(toInsert)>(toInsert), node->m_right);
         else if(toInsert < node->m_element)//the element to insert needs to go to the left
-            insert(std::forward<Ty>(toInsert), node->m_left);
+            insert(std::forward<decltype(toInsert)>(toInsert), node->m_left);
 
         node->updateHeightAndBalanceFactor();
         node->reBalance(node);
@@ -297,30 +316,63 @@ private:
 
 public:
 
+    //const iterator only because if you could change the node it would probably mess up the ordering of the tree
+    using const_iterator = AVLTIterator<T>;
+    friend class const_iterator;
+    const_iterator begin() const {return const_iterator(m_root);}  //get iterator to the first inorder node
+    const_iterator end()   const {return const_iterator(nullptr);} //get iterator "past" the last inorder node
+
     AVLTree() : m_root{nullptr} {}
 
     //to follow RAII free the tree automatically at the end of its scope
     //or if an exception is thrown before the end of its scope
-    ~AVLTree() 
+    ~AVLTree()
     {
         clearTree();
     }
 
-    using Iterator = AVLTIterator<T>;
-    friend class Iterator;
-    Iterator begin() {return Iterator(m_root);}  //get iterator to the first inorder node
-    Iterator end()   {return Iterator(nullptr);} //get iterator "past" the last inorder node
+    //Instead of just looping over the old tree and inserting every node which would be O(N * Log2(N)),
+    //we can assume the right tree is already balanced correctly and just manually insert all the nodes
+    //without any rebalancing. This is faster O(N), and it also keeps the topology the exact same as the old tree
+    AVLTree(AVLTree const& oldTree) : m_root{nullptr}
+    {
+        if(!oldTree.m_root) return;
 
-    bool isEmpty() const 
+        auto copy = [](this auto const& self, Node* node) -> Node*
+        {
+            if(!node) return nullptr;
+            auto newNode = new Node(node->m_element);
+            newNode->m_left  = self(node->m_left);
+            newNode->m_right = self(node->m_right);
+            return newNode;
+        };
+
+        m_root = copy(oldTree.m_root);
+    }
+
+    AVLTree(AVLTree&& oldTree) noexcept
+    {
+        m_root = oldTree.m_root;//take ownership of oldObj's tree
+        oldTree.m_root = nullptr;
+    }
+
+    //unified copy and move assignment with strong guaruntee
+    AVLTree& operator=(AVLTree rhs)//copy will be elided if rvalue passed in
+    {
+        std::swap(m_root, rhs.m_root);
+        return *this;
+    }//rhs destructed and thus old lhs freed
+
+    bool isEmpty() const
     {
         return m_root;
     }
 
     //The Iterator ctor will do a binary search on the tree and return
     //an iterator to that node or and end() iterator if it cannot find the node.
-    Iterator binarySearch(T const& toSearchFor) const
+    const_iterator binarySearch(T const& toSearchFor) const
     {
-        return Iterator(m_root, toSearchFor);
+        return const_iterator(m_root, toSearchFor);
     }
 
     //copy an element into the tree if that element doenst already exist
