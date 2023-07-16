@@ -1,2 +1,3 @@
-A repo of some of the most common data structures.
-They are made with C++ and are header only.
+C++ templated containers (some don't have iterators yet). 
+I made these because I wanted to better understand how common data structures work.
+

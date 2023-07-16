@@ -13,10 +13,10 @@ class ListIterator
 {   
 private:
     //ValTy is now = the type of data in the list
-    using ValTy = List::ValType; 
+    using ValTy = typename List::ValType; 
 
     //NodePointer is now a Node*
-    using NodePointer = List::Node*;
+    using NodePointer = typename List::Node*;
 
     NodePointer prevNode; //location of previous node
     NodePointer currNode; //location of current node

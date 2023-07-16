@@ -165,8 +165,7 @@ public:
 		if(numOfElems >= capacity)
 			reAllocate(capacity + capacity / 2);
 	
-		//new(typePtr + numOfElements) T(std::move(val));
-		typePtr[numOfElems] = std::move(val);
+		::new(typePtr + numOfElems) T(std::move(val));
 		numOfElems++;
 	}
 
@@ -186,7 +185,7 @@ public:
 		
 		//placement new to construct item in array
 		::new(typePtr + numOfElems) T(std::forward<Types>(args)...);
-		numOfElems++;
+		++numOfElems;
 	}
 
 	void eraseAt(size_t index)
@@ -255,7 +254,7 @@ public:
 		}
 	}
 
-	//deletes everything while not chaning capacity
+	//deletes everything while not changing capacity
 	//it is up to the user to call shrinkToFit()
 	void clear()
 	{

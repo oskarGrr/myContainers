@@ -5,14 +5,14 @@
 Vec4::Vec4(int x, int y, int z, int w) : x(x), y(y), z(z), w(w)
 {	
 	std::cout << "Vec4 param construct\n";
-	memoryBlock = new int[10];	
+	memoryBlock = new int[10]{};
 }
 
 //default constructor
 Vec4::Vec4() : x(0), y(0), z(0), w(0)
 {
 	std::cout << "Vec4 default construct\n";
-	memoryBlock = new int[10];
+	memoryBlock = new int[10]{};
 }
 
 //destructor
@@ -26,7 +26,7 @@ Vec4::~Vec4()
 Vec4::Vec4(const Vec4& oldObj) : x(oldObj.x), y(oldObj.y), z(oldObj.z), w(oldObj.w)
 {
 	std::cout << "Vec4 copy construct\n";
-	memoryBlock = new int[10];
+	memoryBlock = new int[10]{};
 	memcpy(memoryBlock, oldObj.memoryBlock, (10*sizeof(int)));	
 }
 
@@ -75,7 +75,7 @@ Vec4& Vec4::operator=(const Vec4& right)
 		return *this;
 
 	std::cout << "Vec4 copy asign\n";
-	memoryBlock = new int[10];
+	memoryBlock = new int[10]{};
 	memcpy(memoryBlock, right.memoryBlock, sizeof(int)*10);
 
 	x = right.x;

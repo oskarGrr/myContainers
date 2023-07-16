@@ -25,7 +25,7 @@ int main()
 
     auto T2(T1);//make a copy of T1 called T2
 
-    //both trees should be
+    //both trees should be like this:
     //          5
     //        /   \
     //       3     8

@@ -396,6 +396,7 @@ public:
             if(!node) return;
             if(toErase < node->m_element) self(node->m_left, toErase);
             else if(toErase > node->m_element) self(node->m_right, toErase);
+
             else if(node->m_left && node->m_right)//if two child nodes replace toErase with its in order predecessor
             {
                 auto predecessor = maxNode(node->m_left);
