@@ -158,8 +158,7 @@ public:
 	//constructs the elements in place in the array.
 	//Takes a varying number of arguments to give the constructor
 	//and also might need a varying number of types
-	template<typename... Types>
-	void emplaceBack(Types&&... args)
+	void emplaceBack(auto&&... ctorArgs)
 	{
 		//if first push/emplace allocate the first array
 		if(!typePtr)
@@ -170,7 +169,7 @@ public:
 			reAllocate(capacity + capacity / 2);
 		
 		//placement new to construct item in array
-		::new(typePtr + numOfElems) T(std::forward<Types>(args)...);
+		::new(typePtr + numOfElems) T(std::forward<decltype<ctorArgs>(ctorArgs)...);
 		numOfElems++;
 	}
 
