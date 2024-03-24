@@ -384,7 +384,7 @@ public:
     //move an element into the tree if that element doenst already exist
     void insert(T&& toInsert)
     {
-        insert(std::forward<T>(toInsert), m_root);
+        insert(std::move(toInsert), m_root);
     }
 
     //Returns true or false indicating whether or not toErase was found and deleted.

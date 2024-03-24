@@ -88,7 +88,7 @@ private:
 
         //construct a node from an rvalue/xvalue
         Node(T&& data, Node* ptr)
-            : next(ptr), data(std::forward<T>(data)){}
+            : next(ptr), data(std::move(data)){}
 
         //node constructor for emplacing inside node
         template<typename... Types>
