@@ -6,5 +6,12 @@ int main()
 {
 	LinkedList<Vec4> myList;	
 
+    for(int i = 0; i < 10; ++i)
+        myList.pushFront({i,i,i,i});
+
+    myList.eraseElement({9,9,9,9});
+
+    myList.printList();
+
 	return 0;
 }

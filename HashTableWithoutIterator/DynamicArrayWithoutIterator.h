@@ -158,18 +158,19 @@ public:
 	//constructs the elements in place in the array.
 	//Takes a varying number of arguments to give the constructor
 	//and also might need a varying number of types
-	void emplaceBack(auto&&... ctorArgs)
+    template <typename ...Types>
+	void emplaceBack(Types&&... ctorArgs)
 	{
 		//if first push/emplace allocate the first array
 		if(!typePtr)
 			reAllocate(DynamicArray::defaultCapacity);
-	
+
 		//if the array runs out of room make more room (1.5x as much)
 		if(numOfElems >= capacity)
 			reAllocate(capacity + capacity / 2);
 		
 		//placement new to construct item in array
-		::new(typePtr + numOfElems) T(std::forward<decltype<ctorArgs>(ctorArgs)...);
+		::new(typePtr + numOfElems) T(std::forward<Types>(ctorArgs)...);
 		numOfElems++;
 	}
 

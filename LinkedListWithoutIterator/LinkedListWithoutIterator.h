@@ -202,7 +202,7 @@ public:
         //get the address of the node AFTER the node we want to delete.
         //if we are deleting the last node that address will be null
         Node* nextNodeLocation = previousNodeLocation->next->next;
-
+        
         //delete node at index
         delete previousNodeLocation->next;
         --size;
@@ -210,6 +210,47 @@ public:
         //make previous node point to the node after the one deleted
         previousNodeLocation->next = nextNodeLocation;
     }
+
+    //Erase a node storing the specified value. If there are more than 1
+    //instances of elem then the first one will be erased.
+    void eraseElement(const T& elem)
+    {
+        Node** traveler = &head;
+        while(*traveler)
+        {
+            if(elem == (*traveler)->data)
+            {
+                //save the node that needs to be deleted.
+                auto temp = *traveler;
+
+                //Point the previous node to the one after the node storing elem.
+                *traveler = (*traveler)->next;
+                delete temp;
+                return;
+            }
+
+            traveler = &(*traveler)->next;
+        }
+    }
+
+    ////Erase all nodes with the specified value.
+    //void eraseAllElements(const T& elem)
+    //{
+    //    Node** traveler = &head;
+    //    while(*traveler)
+    //    {
+    //        if(elem == (*traveler)->data)
+    //        {
+    //            //Point the previous node to the one after the node storing elem.
+    //            *traveler = (*traveler)->next;
+
+    //            delete *traveler;
+    //            return;
+    //        }
+
+    //        traveler = &traveler->next;
+    //    }
+    //}
 
     //deletes all the elements
     void clearAll()
