@@ -25,14 +25,14 @@ private:
         //construct a key value pair node from two existing lvalues
         KVpair(const KeyType& key, const ValType& val) : key(key), value(val){}
 
-        //constructor for for forwarding rvalues to the keytype and valtype ctors
+        //constructor for moving rvalues to the keytype and valtype ctors
         KVpair(KeyType&& key, ValType&& val) 
-            : key(std::forward<KeyType>(key)), value(std::forward<ValType>(val)){}
+            : key(std::move(key)), value(std::move(val)){}
 
-        //ctor for constructing keys and values in place inside table
+        //constructor for emplacing keys and values in place inside table
         template<typename... Types>
-        KVpair(KeyType&& key, Types&&... args) 
-            : key(std::forward<KeyType>(key)), value(std::forward<Types>(args)...){}
+        KVpair(KeyType&& key, Types&&... args)
+            : key(std::move(key)), value(std::forward<Types>(args)...){}
 
         //move constructor used for rehashing
         KVpair(KVpair&& oldPair) noexcept
@@ -200,8 +200,7 @@ public:
         //if the key isnt in the table
         if(!kvpair)
         {
-            chains[index].emplaceFront(std::forward<KeyType>(key), 
-                                       std::forward<Types>(args)...);
+            chains[index].emplaceFront(std::move(key), std::forward<Types>(args)...);
             size++;
             if(isMaxLoadFactorReached())
                 rehash();
@@ -238,9 +237,9 @@ public:
             new(&kvpair->value) ValType(std::forward<Types>(args)...);
             return {false, kvpair->value};
         }
-        {//if kpvair is nullptr (key wasnt already in list)
-            chains[index].emplaceFront(std::forward<KeyType>(key), 
-                                       std::forward<Types>(args)...);
+        else //if kpvair is nullptr (key wasnt already in list)
+        {
+            chains[index].emplaceFront(std::move(key), std::forward<Types>(args)...);
             size++;
             if(isMaxLoadFactorReached())
                 rehash();
@@ -263,10 +262,9 @@ public:
             new(&kvpair->value) ValType(std::forward<ValType>(value));
             return {false, kvpair->value};
         }
-        else
-        {//if kvpair is nullptr (key wasnt already in list)
-            chains[index].emplaceFront(std::forward<KeyType>(key),
-                                       std::forward<ValType>(value));
+        else //if kvpair is nullptr (key wasnt already in list)
+        {
+            chains[index].emplaceFront(std::move(key), std::move(value));
             size++;
             if(isMaxLoadFactorReached())
                 rehash();
