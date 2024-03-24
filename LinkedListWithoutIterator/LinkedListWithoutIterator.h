@@ -233,25 +233,6 @@ public:
         }
     }
 
-    ////Erase all nodes with the specified value.
-    //void eraseAllElements(const T& elem)
-    //{
-    //    Node** traveler = &head;
-    //    while(*traveler)
-    //    {
-    //        if(elem == (*traveler)->data)
-    //        {
-    //            //Point the previous node to the one after the node storing elem.
-    //            *traveler = (*traveler)->next;
-
-    //            delete *traveler;
-    //            return;
-    //        }
-
-    //        traveler = &traveler->next;
-    //    }
-    //}
-
     //deletes all the elements
     void clearAll()
     {
