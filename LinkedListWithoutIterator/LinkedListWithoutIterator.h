@@ -365,6 +365,7 @@ public:
     //returns the location of the node with the 
     //specified value. If there are mutiple of the
     //same value it will return the first one it finds
+    [[nodiscard]]
     Node* findValue(const T& value) const
     {
         //start the journey at the first node

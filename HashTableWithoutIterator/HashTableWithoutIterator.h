@@ -301,7 +301,8 @@ public:
         }
     }
 
-    //return the location of the value if key is in the table.
+    //returns the location of the value if key is in the 
+    //table, otherwise returns nullptr.
     ValType* search(const KeyType& key)
     {
         //get the index of which list to search

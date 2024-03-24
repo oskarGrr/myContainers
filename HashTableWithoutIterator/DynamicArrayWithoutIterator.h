@@ -1,7 +1,8 @@
 #pragma once
 #include <utility>//std::move, std::forward<T>
+#include "Vec4.h"
 
-//templated class for an array that is resizeable at runtime (std::vector<T>)
+//templated class for an array that is resizeable at runtime std::vector
 //iterator not necessary
 template<class T> 
 class DynamicArray
@@ -49,7 +50,21 @@ public:
 		::operator delete(typePtr, sizeof(T)*capacity);
 	}
 
-	DynamicArray(DynamicArray&&) = delete;
+	//move constructor
+	DynamicArray(DynamicArray&& oldObj) noexcept
+	{
+		//make the new array steal the 
+		//resources of the old array
+		typePtr    = oldObj.typePtr;
+		numOfElems = oldObj.numOfElems;
+		capacity   = oldObj.capacity;
+		
+		//remember to not have two pointers 
+		//pointing at the same memory
+		oldObj.typePtr = nullptr;
+		oldObj.capacity = 0;
+		oldObj.numOfElems = 0;
+	}
 
 	//copy constructor
 	DynamicArray(const DynamicArray& oldObj) 
@@ -150,28 +165,27 @@ public:
 		if(numOfElems >= capacity)
 			reAllocate(capacity + capacity / 2);
 	
-		//new(typePtr + numOfElements) T(std::move(val));
-		typePtr[numOfElems] = std::move(val);
+		::new(typePtr + numOfElems) T(std::move(val));
 		numOfElems++;
 	}
 
 	//constructs the elements in place in the array.
 	//Takes a varying number of arguments to give the constructor
 	//and also might need a varying number of types
-    template <typename ...Types>
+	template<typename... Types>
 	void emplaceBack(Types&&... ctorArgs)
 	{
 		//if first push/emplace allocate the first array
 		if(!typePtr)
 			reAllocate(DynamicArray::defaultCapacity);
-
+	
 		//if the array runs out of room make more room (1.5x as much)
 		if(numOfElems >= capacity)
 			reAllocate(capacity + capacity / 2);
 		
 		//placement new to construct item in array
 		::new(typePtr + numOfElems) T(std::forward<Types>(ctorArgs)...);
-		numOfElems++;
+		++numOfElems;
 	}
 
 	void eraseAt(size_t index)
@@ -240,7 +254,7 @@ public:
 		}
 	}
 
-	//deletes everything while not chaning capacity
+	//deletes everything while not changing capacity
 	//it is up to the user to call shrinkToFit()
 	void clear()
 	{

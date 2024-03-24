@@ -366,6 +366,7 @@ public:
     // auto it = myList.findValue(value);
     //if(it != myList.end())
     //to see if its in the list or not
+    [[nodiscard]]
     Iterator findValue(const T& value)
     {
         //use the iterator class to iterate over the list
