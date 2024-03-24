@@ -1,7 +1,7 @@
 #pragma once
 #include <utility>   //std::move(), std::forward<T>()
 #include <iostream>  //std::cout
-#include <exception> //std::out_of_range std::invalid_argument
+#include <cassert>
 #include "Vec4.h"
 
 //the same LinkedList class from 200_LinkedList 
@@ -124,7 +124,7 @@ public:
     ~LinkedList()
     {
         clearAll();
-    }  
+    }
 
     void printList() const
     {
@@ -155,41 +155,14 @@ public:
         }
     }
 
-    //if you already (traversed the list) know where the node is
-    //that you want to delete, then use this function.
-    //give it the node before the one that you want to delete
-    void eraseAtLocation(Node* b4Target)
-    {
-        if(!b4Target)
-            throw std::out_of_range("passed null to eraseAtLocation()\n\n");
-
-        //node to delete
-        Node* target = b4Target->next;
-
-        //it is possible to delete nullptr, 
-        //but I want to make sure target isnt null before I try
-        //to dereference it to obtain what it points to
-        if(!target)
-            throw std::out_of_range("passed the end of list to eraseAtLocation()\n\n");
-
-        //previous node now points to
-        //where target used to point to
-        b4Target->next = target->next;
-
-        delete target;
-        --size;
-    }
-
     //if you dont know where the node you want to delete is yet (you didnt travel to it)
     //then use then function (it will traverse list index times then erase)
-    void eraseAtIndex(size_t index)
+    void eraseAtIndex(const size_t index)
     {
-        //if index is out of range / too large
-        if(index > size-1) 
-            throw std::out_of_range("tried to erase at invalid index");
+        //If in debug mode check to make sure index is in range.
+        assert(index < size);
 
-        //case: index provided is the first element (index 0)
-        if(!index)
+        if(index == 0)
         {
             popFront();
             return;
@@ -197,7 +170,7 @@ public:
 
         //find the address of the location of the element
         //previous the one we want to delete
-        Node* previousNodeLocation = iterateUntil(index-1);
+        Node* previousNodeLocation = iterateToNode(index-1);
 
         //get the address of the node AFTER the node we want to delete.
         //if we are deleting the last node that address will be null
@@ -255,6 +228,7 @@ public:
             //until traveler points to null (which means it reached the end of the list)
             traveler = temp;
         }
+
         //make sure head isnt a dangling pointer
         head = nullptr;
         size = 0;
@@ -275,7 +249,7 @@ public:
         //get adress of list[index] then make a new node
         //that points to where list[index] points to 
         //then change list[index] to point to the new node
-        Node* temp = iterateUntil(index);
+        Node* temp = iterateToNode(index);
         temp->next = new Node(temp->next, std::forward<Types>(args)...);
         size++;
     }
@@ -345,7 +319,7 @@ public:
         //get adress of list[index] then make a new node
         //that points to where list[index] points to
         //then change list[index] to point to the new node
-        Node* temp = iterateUntil(index);
+        Node* temp = iterateToNode(index);
         temp->next = new Node(val, temp->next);
         size++;
     }
@@ -364,7 +338,7 @@ public:
         //get adress of list[index] then make a new node
         //that points to where list[index] points to
         //then change list[index] to point to the new node
-        Node* temp = iterateUntil(index);
+        Node* temp = iterateToNode(index);
         temp->next = new Node(std::move(val), temp->next);
         size++;
     }
@@ -372,7 +346,8 @@ public:
     //returns the location of the node at index
     //if you give it an index > max index then
     //it returns location of last node
-    Node* iterateUntil(const size_t index) const
+    [[nodiscard]]
+    Node* iterateToNode(const size_t index) const
     {
         //start the journey at the first node
         Node* traveler = head;
