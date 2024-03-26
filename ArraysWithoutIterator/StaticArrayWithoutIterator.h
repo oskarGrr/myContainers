@@ -22,7 +22,7 @@ public:
     ~StaticArray() = default;
     StaticArray(StaticArray&&) = default;
     StaticArray(const StaticArray&) = default;
-    StaticArray& operator=(StaticArray&&) = default
+    StaticArray& operator=(StaticArray&&) = default;
     StaticArray& operator=(const StaticArray&) = default;
 
     //helper method to fill the array with a specific value

@@ -165,7 +165,8 @@ public:
 		if(numOfElems >= capacity)
 			reAllocate(capacity + capacity / 2);
 	
-		::new(typePtr + numOfElems) T(std::move(val));
+        typePtr[numOfElems] = T(std::move(val));
+		//::new(typePtr + numOfElems) T(std::move(val));
 		numOfElems++;
 	}
 
